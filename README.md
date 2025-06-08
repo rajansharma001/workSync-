@@ -6,31 +6,46 @@ First, run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 📌 Project Overview
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Task Management System where admins can assign tasks to employees. Users can view and update their task status (pending/completed).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🔧 Tech Stack
 
-To learn more about Next.js, take a look at the following resources:
+- Next.js (React)
+- TypeScript
+- Tailwind CSS
+- MongoDB + Prisma
+- Auth.js (Google/GitHub login)
+- Framer Motion (for UI animation)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 👥 Roles & Workflow
 
-## Deploy on Vercel
+### Admin:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Approves new users
+- Manages users
+- Assigns tasks
+- Full CRUD on tasks
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### User:
+
+- Can log in (after approval)
+- Views assigned tasks
+- Updates task status
+
+---
+
+## 🎯 Features
+
+- Role-based access
+- Admin/user dashboard
+- Task status update
+- Auth with social login
