@@ -2,6 +2,7 @@ import type { NextAuthConfig } from "next-auth";
 import GitHub from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
 import Resend from "next-auth/providers/resend";
+import { prisma } from "./prisma/prisma";
 
 export default {
   providers: [
@@ -19,4 +20,22 @@ export default {
     }),
   ],
   secret: process.env.AUTH_SECRET,
+  callbacks: {
+    async jwt({ user, token }) {
+      if (user) {
+        const DbUser = await prisma.user.findUnique({
+          where: { id: user.id },
+        });
+
+        token.id = DbUser?.id;
+        token.role = DbUser?.role;
+      }
+      return token;
+    },
+    async session({ token, session }) {
+      session.user.id = token.id as string;
+      session.user.role = token.role as string;
+      return session;
+    },
+  },
 } satisfies NextAuthConfig;

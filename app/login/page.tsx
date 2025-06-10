@@ -1,33 +1,27 @@
 "use client";
-import { signIn } from "next-auth/react";
+import { LoginForm } from "../../src/components/Login";
+import Image from "next/image";
 
 const Login = () => {
-  const handleSubmit = async (formData: any) => {
-    signIn("resend", formData);
-  };
   return (
     <div>
-      <form action={handleSubmit}>
-        <input
-          type="email"
-          name="email"
-          id="email-resend"
-          placeholder="Enter your email"
-        />
-        <button type="submit">Login</button>
-      </form>
-      <button
-        className="p-2 bg-blue-500 rounded-md uppercase font-semibold text-[12px] cursor-pointer"
-        onClick={() => signIn("google")}
-      >
-        Login with google
-      </button>
-      <button
-        className="p-2 bg-blue-500 rounded-md uppercase font-semibold text-[12px] cursor-pointer"
-        onClick={() => signIn("github")}
-      >
-        Login with Github
-      </button>
+      <div className="bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
+        <div className="flex w-full max-w-sm flex-col gap-6">
+          <a
+            href="#"
+            className="flex items-center gap-2 self-center font-medium"
+          >
+            <Image
+              src="/Worksync.png"
+              alt="worksync logo"
+              width={200}
+              height={110}
+              className="object-cover"
+            />
+          </a>
+          <LoginForm />
+        </div>
+      </div>
     </div>
   );
 };

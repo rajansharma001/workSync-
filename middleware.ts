@@ -14,12 +14,12 @@ export async function middleware(req: NextRequest) {
     (session && path == "/login") ||
     (session && path == "/register")
   ) {
-    return NextResponse.redirect(new URL("/", req.url));
+    return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: "/dashboard/:path*",
+  matcher: ["/dashboard/:path*", "/login:path*"],
 };
