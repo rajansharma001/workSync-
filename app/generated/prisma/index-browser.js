@@ -142,31 +142,15 @@ exports.Prisma.AccountScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
-exports.Prisma.SessionScalarFieldEnum = {
+exports.Prisma.TaskScalarFieldEnum = {
   id: 'id',
-  sessionToken: 'sessionToken',
-  userId: 'userId',
-  expires: 'expires',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.VerificationTokenScalarFieldEnum = {
-  id: 'id',
-  identifier: 'identifier',
-  token: 'token',
-  expires: 'expires'
-};
-
-exports.Prisma.AuthenticatorScalarFieldEnum = {
-  credentialID: 'credentialID',
-  userId: 'userId',
-  providerAccountId: 'providerAccountId',
-  credentialPublicKey: 'credentialPublicKey',
-  counter: 'counter',
-  credentialDeviceType: 'credentialDeviceType',
-  credentialBackedUp: 'credentialBackedUp',
-  transports: 'transports'
+  title: 'title',
+  description: 'description',
+  assignee: 'assignee',
+  dueDate: 'dueDate',
+  priority: 'priority',
+  status: 'status',
+  userid: 'userid'
 };
 
 exports.Prisma.SortOrder = {
@@ -183,9 +167,7 @@ exports.Prisma.QueryMode = {
 exports.Prisma.ModelName = {
   User: 'User',
   Account: 'Account',
-  Session: 'Session',
-  VerificationToken: 'VerificationToken',
-  Authenticator: 'Authenticator'
+  Task: 'Task'
 };
 
 /**

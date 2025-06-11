@@ -6,9 +6,9 @@ import React from "react";
 
 const Profile = () => {
   const { data: session } = useSession();
-  if (session?.user.role == "user") {
-    redirect("/dashboard/unathorized");
-  }
+  // if (session?.user.role == "user") {
+  //   redirect("/dashboard/unathorized");
+  // }
   return (
     <div>
       <ProfileComp />

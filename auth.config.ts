@@ -29,12 +29,14 @@ export default {
 
         token.id = DbUser?.id;
         token.role = DbUser?.role;
+        token.phone = DbUser?.phone;
       }
       return token;
     },
     async session({ token, session }) {
       session.user.id = token.id as string;
       session.user.role = token.role as string;
+      session.user.phone = token.phone as string;
       return session;
     },
   },
