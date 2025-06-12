@@ -1,7 +1,5 @@
 import React from "react";
-import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import Image from "next/image";
 import { useSession } from "next-auth/react";
 
 const ProfileComp = () => {

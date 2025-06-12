@@ -12,7 +12,7 @@ export const data = {
     },
     {
       title: "Manage Task",
-      url: "/task",
+      url: "/dashboard/task",
       icon: Check,
       isActive: true,
       isAdmin: true,

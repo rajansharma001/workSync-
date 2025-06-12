@@ -7,7 +7,13 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import NextBreadcrumb from "./NextBreadcrumb";
+import Toast from "./toastNotification/Toast";
+import { CircleCheck } from "lucide-react";
 
+interface Props {
+  successMsg: string;
+  errorMsg: string;
+}
 export default function Page({
   children,
 }: Readonly<{
