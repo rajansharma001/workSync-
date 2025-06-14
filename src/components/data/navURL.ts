@@ -1,4 +1,4 @@
-import { Check, User2Icon } from "lucide-react";
+import { Check, List, ListCheckIcon, User2Icon } from "lucide-react";
 
 // nav items
 export const data = {
@@ -16,6 +16,14 @@ export const data = {
       icon: Check,
       isActive: true,
       isAdmin: true,
+    },
+
+    {
+      title: "Todo",
+      url: "/dashboard/todo",
+      icon: ListCheckIcon,
+      isActive: true,
+      isAdmin: false,
     },
   ],
 };

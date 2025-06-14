@@ -1,21 +1,21 @@
 "use client";
-import TaskComp from "@/components/TaskComp";
+import TodoGet from "@/components/TodoGet";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import React from "react";
 
-const Task = () => {
+const page = () => {
   const { data: session } = useSession();
   const userSessionRole = session?.user.role;
 
-  if (userSessionRole !== "admin") {
+  if (userSessionRole === "admin") {
     redirect("/dashboard/unathorized");
   }
   return (
     <div>
-      <TaskComp id="" />
+      <TodoGet />
     </div>
   );
 };
 
-export default Task;
+export default page;

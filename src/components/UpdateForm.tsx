@@ -1,34 +1,36 @@
-import React, { useEffect, useState } from "react";
-import { Input } from "./ui/input";
-import { Textarea } from "./ui/textarea";
+import React, { FormEvent, useEffect, useState } from "react";
 import { Button } from "./ui/button";
-import { User } from "../../type/userType";
-import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
-import { prioritySet, statusSet } from "./data/formData";
-import Toast from "./toastNotification/Toast";
+import { Textarea } from "./ui/textarea";
 import { Label } from "./ui/label";
+import { Input } from "./ui/input";
+import Toast from "./toastNotification/Toast";
+import { User } from "../../type/userType";
+import { prioritySet, statusSet } from "./data/formData";
+import { Task } from "../../type/taskType";
 
 interface Props {
-  isTask: () => void;
+  taskId: string;
 }
-const TaskForm = ({ isTask }: Props) => {
-  const [userData, setUserData] = useState<User[] | null>([]);
-  const { data: session } = useSession();
-  const user = session?.user;
 
-  //   task usestates--------------
-
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [assignee, setAssignee] = useState("");
-  const [dueDate, setDueDate] = useState("");
-  const [priority, setPriority] = useState("");
-  const [status, setStatus] = useState("");
+const UpdateForm = ({ taskId }: Props) => {
   //   --------- error
   const [hasMsg, setHasMsg] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+  //   task usestates--------------
+
+  const [task, setTask] = useState<Task | null>(null);
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    assignee: "",
+    dueDate: "",
+    priority: "",
+    status: "",
+  });
+
+  const [userData, setUserData] = useState<User[]>([]);
 
   //   ----------   getting user    --------------------
   useEffect(() => {
@@ -43,63 +45,80 @@ const TaskForm = ({ isTask }: Props) => {
     getUser();
   }, []);
 
-  //   ---------------handle submit
+  //   --------- get task by id----------------
 
-  const handleSubmit = async (e: any) => {
+  const fetchTask = async () => {
+    const res = await fetch(`/api/collection/task/${taskId}`, {
+      method: "GET",
+    });
+    const result = await res.json();
+    setTask(result);
+    setFormData({
+      title: result?.title || "",
+      description: result?.description || "",
+      assignee: result.userid || "",
+      dueDate: result?.dueDate || "",
+      priority: result?.priority || "",
+      status: result?.status || "",
+    });
+  };
+
+  useEffect(() => {
+    fetchTask();
+  }, [taskId]);
+
+  //   handleUPdate ---------------
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => {
+    const { name, value, type } = e.target;
+
+    const finalValue =
+      type === "checkbox" ? (e.target as HTMLInputElement).checked : value;
+
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: finalValue,
+    }));
+  };
+  const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (user?.role === "user") {
-      redirect("/dashboard/unathorized");
-    } else {
-      const res = await fetch("/api/collection/task", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          title,
-          description,
-          assignee,
-          dueDate,
-          priority,
-          status,
-          userid: user?.id,
-        }),
-      });
+    const res = await fetch(`/api/collection/task/${taskId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
 
-      const result = await res.json();
-      if (res.ok) {
-        setHasMsg(true);
-        setSuccess("Task added and assigned success");
-        setError("");
-        setTitle("");
-        setDescription("");
-        setAssignee("");
-        setDueDate("");
-        setPriority("");
-        setStatus("");
-        setTimeout(() => {
-          setHasMsg(false);
-        }, 3000);
-      } else {
-        setError("Something went wrong.");
-        setSuccess("");
-      }
-      setTimeout(() => {
-        setHasMsg(false);
-        setSuccess("");
-        setError("");
-      }, 3000);
+    const result = await res.json();
+    setHasMsg(true);
+
+    if (!res.ok) {
+      setError("update failed");
+    } else {
+      setSuccess("Task updated success");
+      setFormData({
+        title: "",
+        description: "",
+        assignee: "",
+        dueDate: "",
+        priority: "",
+        status: "",
+      });
     }
   };
 
   return (
-    <div className=" w-full absolute inset-0 top-10 left-0  flex justify-center bg-white">
+    <div className=" w-full ">
       <div className=" relative  w-full  flex justify-center bg-white">
-        <div className="w-[95%] h-screen flex flex-col items-center shadow-2xl rounded-md p-10 gap-2">
+        <div className="w-full h-screen flex flex-col items-center shadow-2xl rounded-md p-10 gap-2">
           <div className="absolute h-[8px] inset-0 top-0  mt-10 right-0">
             {hasMsg && <Toast error={error} success={success} />}
           </div>
-          <form onSubmit={handleSubmit} method="POST" className="w-full">
+          <form onSubmit={handleUpdate} method="POST" className="w-full">
             <div className="flex  flex-col justify-center items-center w-full gap-2  text-[14px]">
               <div className="w-full gap-1 flex-4/12 flex flex-col">
                 <Label htmlFor="title">Task Title</Label>
@@ -107,10 +126,8 @@ const TaskForm = ({ isTask }: Props) => {
                   name="title"
                   id="title"
                   placeholder=" Task title"
-                  value={title}
-                  onChange={(e) => {
-                    setTitle(e.target.value);
-                  }}
+                  value={formData.title}
+                  onChange={handleChange}
                 />
               </div>
 
@@ -119,12 +136,11 @@ const TaskForm = ({ isTask }: Props) => {
                 <select
                   name="assignee"
                   id=""
-                  value={assignee}
-                  onChange={(e) => {
-                    setAssignee(e.target.value);
-                  }}
+                  value={formData.assignee}
+                  onChange={handleChange}
                   className="p-2 rounded-sm border-gray-200 border-2"
                 >
+                  {/* <option value={formData.userid}>{userid}</option> */}
                   {userData?.map((user, index) => (
                     <option value={user.id} key={index}>
                       {user.email}
@@ -137,12 +153,11 @@ const TaskForm = ({ isTask }: Props) => {
                 <select
                   name="priority"
                   id=""
-                  value={priority}
-                  onChange={(e) => {
-                    setPriority(e.target.value);
-                  }}
+                  value={formData.priority}
+                  onChange={handleChange}
                   className="p-2 rounded-sm border-gray-200 border-2"
                 >
+                  <option value="">{formData.priority}</option>
                   {prioritySet.map((p, i) => (
                     <option
                       key={i}
@@ -159,12 +174,11 @@ const TaskForm = ({ isTask }: Props) => {
                 <select
                   name="status"
                   id=""
-                  value={status}
-                  onChange={(e) => {
-                    setStatus(e.target.value);
-                  }}
+                  value={formData.status}
+                  onChange={handleChange}
                   className="p-2 rounded-sm border-gray-200 border-2"
                 >
+                  <option value="">{formData.status}</option>
                   {statusSet.map((p, i) => (
                     <option
                       key={i}
@@ -177,15 +191,17 @@ const TaskForm = ({ isTask }: Props) => {
                 </select>
               </div>
               <div className="w-full gap-1 flex-4/12 flex flex-col">
-                <Label htmlFor="dueDate">Deadline</Label>
+                <Label htmlFor="dueDate">Deadline{formData.dueDate}</Label>
                 <Input
                   type="date"
                   name="dueDate"
                   id="dueDate"
-                  value={dueDate}
-                  onChange={(e) => {
-                    setDueDate(e.target.value);
-                  }}
+                  value={
+                    formData.dueDate
+                      ? new Date(formData.dueDate).toISOString().split("T")[0]
+                      : ""
+                  }
+                  onChange={handleChange}
                 />
               </div>
               <div className="w-full flex-4/12 gap-1 flex flex-col">
@@ -194,8 +210,8 @@ const TaskForm = ({ isTask }: Props) => {
                   name="description"
                   placeholder="Enter task details..."
                   id="description"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
+                  value={formData.description}
+                  onChange={handleChange}
                 />
               </div>
               <Button type="submit">Submit</Button>
@@ -207,4 +223,4 @@ const TaskForm = ({ isTask }: Props) => {
   );
 };
 
-export default TaskForm;
+export default UpdateForm;

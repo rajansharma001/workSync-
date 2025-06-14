@@ -6,16 +6,16 @@ import { User } from "../../type/userType";
 import { Button } from "./ui/button";
 import { Delete, DeleteIcon, Edit } from "lucide-react";
 import Toast from "./toastNotification/Toast";
-interface Props {
-  id: string;
-}
-const TaskTable = ({ id }: Props) => {
+import UpdateForm from "./UpdateForm";
+
+const TaskTable = () => {
   const [isMsg, setIsMsg] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  const [assignUserId, setAssignUserId] = useState("");
-  const [assignUserName, setAssignUserName] = useState("");
+  const [assignUserId, setAssignUserId] = useState();
+  const [assignUserName, setAssignUserName] = useState();
+  const [taskUser, setTaskUser] = useState<User[] | null>(null);
   const [isTaskUpdatePopOpen, setIsTaskUpdatePopOpen] = useState(false);
 
   const [task, setTask] = useState<Task[] | null>([]);
@@ -34,11 +34,13 @@ const TaskTable = ({ id }: Props) => {
   const getUser = async () => {
     const res = await fetch("/api/collection/user");
     const result = await res.json();
+    setTaskUser(result);
     if (res.ok) {
-      result.map((u: User) => {
+      result.map((u: any) => {
         setAssignUserId(u.id);
-        setAssignUserName(u.name);
+        setAssignUserName(u.email);
       });
+      console.log("usergetting or not:", result);
       setSuccess(`${result.length} 's user found`);
 
       setTimeout(() => {
@@ -110,7 +112,7 @@ const TaskTable = ({ id }: Props) => {
               <div className="p-2">
                 {new Date(t.dueDate).toISOString().split("T")[0]}
               </div>
-              <div className="p-2">{t.id}</div>
+              <div className="p-2">{t.status}</div>
               <div className="p-2">
                 <div className="flex gap-2">
                   <form onSubmit={deleteTask} method="POST">
@@ -137,6 +139,22 @@ const TaskTable = ({ id }: Props) => {
           ))}
         </div>
       </div>
+
+      {/* ------ Update------- */}
+      {isTaskUpdatePopOpen && (
+        <div className="absolute inset-0 top-10 right-0  bg-white w-[95%]">
+          <div className="flex justify-end">
+            <Button
+              onClick={() => {
+                setIsTaskUpdatePopOpen(false);
+              }}
+            >
+              close
+            </Button>
+          </div>
+          <UpdateForm taskId={taskId} />
+        </div>
+      )}
     </div>
   );
 };

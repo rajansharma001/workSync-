@@ -38,7 +38,7 @@ const TaskComp = ({ id }: Props) => {
       {/* task table */}
 
       <div className="w-full flex justify-center items-center mt-10">
-        <TaskTable id={id} />
+        <TaskTable />
       </div>
 
       {isTaskPopOpen && <TaskForm isTask={handlePop} />}
